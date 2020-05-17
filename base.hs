@@ -45,7 +45,7 @@ extent s d =  if permissible < magnitude (0, 0) scaled then resize scaled permis
 ----------------------------------------------------------------- Values - Renderer
 window      = InWindow "Football" screensize (offset, offset) :: Display
 background  = white
-fps         = 144 :: Int
+fps         = 60 :: Int
 width       = 1100
 height      = miniaturize 68
 offset      = 100

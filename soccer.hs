@@ -17,7 +17,7 @@ initialState :: Contender -> Contender -> SoccerGame
 initialState = Game (0, 0) (0, 0) Nothing (0, 0) -- Constructs the initial state given the contenders
 ----------------------------------------------------------------- Code
 main :: IO ()
-main = simulate window background fps (initialState leftTeam rightTeam) render update -- Main function assembling all components
+main = simulate window background fps (initialState leftTeam rightTeam) render $ const update -- Main function assembling all components
 ----------------------------------------------------------------- View
 render :: SoccerGame -> Picture -- Function rendering the state to a picture
 render game = pictures $ pictures <$> [field, residents]
@@ -25,8 +25,8 @@ render game = pictures $ pictures <$> [field, residents]
         residents = [team (game^.leftPlayer), team (game^.rightPlayer), names (game^.leftPlayer.name) (game^.rightPlayer.name)]
           where team t = pictures $ zipWith (uncurry translate) (t^.configuration) $ repeat $ player $ t^.shirt
 ----------------------------------------------------------------- Controller
-moveBall, rollResistance, execute :: Float -> Update  -- Update functions composing to the function that steps the world one iteration
-update _ seconds = execute seconds . possession . side . rollResistance seconds . moveBall seconds
+update, moveBall, rollResistance, execute :: Float -> Update  -- Update functions composing to the function that steps the world one iteration
+update seconds = execute seconds . possession . side . rollResistance seconds . moveBall seconds
 moveBall seconds game   = ballLoc %~ (zipTuple (+) $ join bimap (*seconds) $ game^.ballVel) $ game
 rollResistance seconds  = ballVel %~ (join bimap $ \x -> x-x*resistance*seconds)
 execute s = exec True . exec False -- Function to execute player moves.
@@ -44,6 +44,6 @@ side, possession :: Update
 side game | (not ... (||)) (bound _2 top) $ bound _1 right = game -- Update function taking care of scoring and out of field
           | otherwise = if bound _2 $ miniaturize 3.66 then kickoff else goal --Out of game
           where bound orientation = (>) $ abs $ game^.ballLoc.orientation
-                goal = (score . if (>) 0 $ game^.ballLoc._1 then _1 else _2) %~ succ $ kickoff
-                kickoff = score .~ (game^.score) $ initialState leftTeam rightTeam
+                goal = (score . if (>) 0 $ game^.ballLoc._1 then _1 else _2) %~ succ $ kickoff -- Score
+                kickoff = score .~ (game^.score) $ initialState leftTeam rightTeam -- Back to start keeping the score
 possession game = case game^.gained of Nothing -> game; Just des -> ballLoc .~ (playerLoc des game) $ game -- Update possession

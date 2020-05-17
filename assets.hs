@@ -6,7 +6,8 @@ import Control.Monad (join, replicateM)
 import Base
 
 tile :: Picture -> Picture  -- Takes a corner tile and reflects it to the entire screen
-tile = pictures . zipWith (\[x, y]-> scale x y) (replicateM 2 [-1, 1]) . repeat -- Apply all 2-dimensional reflections to the tiles
+-- tile = pictures . zipWith (\[x, y]-> scale x y) (replicateM 2 [-1, 1]) . repeat -- (My prefered implementation of tile, but it is bugged)
+tile = let comb f x = [f x, x] in pictures . concat . comb (map $ scale 1 (-1)) . comb (rotate 180) -- Apply all 2-dimensional reflections to the tiles
 
 ----------------------------------------------------------------- Assets
 pitch :: Picture  --Combines grass and linework into the full pitch
