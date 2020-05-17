@@ -3,7 +3,7 @@ A truncated SoccerFun made in Haskell for a thesis
 
 # Usage of the software
 ## Setup
-The program has two dependencies, both downloadable from hackage: Lens (Control.Lens, https://hackage.haskell.org/package/lens) and gloss (Graphics.Gloss, https://hackage.haskell.org/package/gloss)
+The program has two dependencies, both downloadable from hackage: Lens [Control.Lens] (https://hackage.haskell.org/package/lens) and gloss [Graphics.Gloss] (https://hackage.haskell.org/package/gloss)
 These can be installed using the following commands in the terminal.
 cabal update
 cabal install lens
